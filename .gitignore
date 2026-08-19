@@ -1,12 +1,7 @@
-backend/node_modules/
-backend/temp/
-backend/database.json
-backend/node_modules/.cache/
-frontend/node_modules/
-frontend/build/
-.DS_Store
-*.log
-.env
-*.zip
-*.download
-*.tmp
+echo backend/node_modules/ >> .gitignore
+echo backend/temp/ >> .gitignore
+echo backend/database.json >> .gitignore
+echo frontend/node_modules/ >> .gitignore
+echo frontend/build/ >> .gitignore
+echo *.zip >> .gitignore
+echo *.download >> .gitignore
