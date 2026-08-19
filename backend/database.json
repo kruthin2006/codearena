@@ -1,0 +1,86 @@
+{
+  "users": [
+    {
+      "_id": "1",
+      "username": "admin",
+      "email": "admin@codearena.com",
+      "password": "$2a$10$zFbWuANiP.fdHGMJ4TLkzesZJWki4DYyx6Kg5RHc.qGqRga4oxnX.",
+      "role": "admin",
+      "stats": {
+        "problemsSolved": 0,
+        "totalAttempts": 1
+      },
+      "createdAt": "2026-08-19T15:56:59.665Z"
+    },
+    {
+      "_id": "2",
+      "username": "student",
+      "email": "demo@example.com",
+      "password": "$2a$10$m4umABh7d7t4O7xPrHHZUeJOXlKWiIZAfdkuQh1nbCiF6utgih8AO",
+      "role": "student",
+      "stats": {
+        "problemsSolved": 0,
+        "totalAttempts": 0
+      },
+      "createdAt": "2026-08-19T16:04:06.575Z"
+    },
+    {
+      "_id": "3",
+      "username": "kruthin",
+      "email": "kruthi@gmail.com",
+      "password": "$2a$10$S/wwYHe/GaAVcCaOhBvLFeWfQd/l4JQOmeW/P4tj6HVvMvSHv5K9.",
+      "role": "student",
+      "stats": {
+        "problemsSolved": 0,
+        "totalAttempts": 0
+      },
+      "createdAt": "2026-08-19T16:52:41.546Z"
+    }
+  ],
+  "problems": [
+    {
+      "_id": "1",
+      "title": "1",
+      "description": "1",
+      "sampleInput": "1",
+      "sampleOutput": "1",
+      "constraints": "1",
+      "difficulty": "Easy",
+      "testCases": [
+        {
+          "input": "1",
+          "output": "1"
+        }
+      ],
+      "setter": "1",
+      "createdAt": "2026-08-19T16:01:57.909Z"
+    }
+  ],
+  "submissions": [
+    {
+      "_id": "1",
+      "problem": "1",
+      "user": "1",
+      "code": "import java.util.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n        System.out.print(1);\n        \n    }\n}",
+      "language": "java",
+      "status": "accepted",
+      "results": [
+        {
+          "passed": true,
+          "output": "1",
+          "expected": "1",
+          "error": ""
+        }
+      ],
+      "score": 100,
+      "totalTestCases": 1,
+      "passedTestCases": 1,
+      "submittedAt": "2026-08-19T16:02:20.090Z"
+    }
+  ],
+  "_meta": {
+    "userIdCounter": 4,
+    "problemIdCounter": 2,
+    "submissionIdCounter": 2
+  }
+}
