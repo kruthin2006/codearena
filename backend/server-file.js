@@ -1,12 +1,3 @@
-// ✅ Add this at the VERY TOP - Error handling
-process.on('uncaughtException', (err) => {
-  console.error('💥 Uncaught Exception:', err);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('💥 Unhandled Rejection:', reason);
-});
-
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -21,9 +12,14 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// ============ DATABASE - USE /tmp FOR RENDER ============
-// ✅ For Render, use /tmp directory (writable)
+// ============ FIXED: USE /tmp FOR RENDER ============
 const DB_FILE = path.join('/tmp', 'database.json');
+const TEMP_DIR = '/tmp';
+
+// Create temp directory if it doesn't exist
+if (!fs.existsSync(TEMP_DIR)) {
+  fs.mkdirSync(TEMP_DIR, { recursive: true });
+}
 
 function readDB() {
   if (!fs.existsSync(DB_FILE)) {
@@ -182,12 +178,6 @@ app.delete('/api/admin/problems/:id', auth, adminOnly, (req, res) => {
 });
 
 // ============ CODE EXECUTION ============
-// ✅ Use /tmp for temp files on Render
-const TEMP_DIR = '/tmp';
-if (!fs.existsSync(TEMP_DIR)) {
-  fs.mkdirSync(TEMP_DIR, { recursive: true });
-}
-
 function executeJava(code, input) {
   return new Promise((resolve) => {
     const fileName = 'Solution_' + Date.now();
@@ -531,7 +521,7 @@ function createDefaultAdmin() {
 
 createDefaultAdmin();
 
-// ============ START SERVER ============
+// ============ FIXED: START SERVER ============
 app.listen(PORT, '0.0.0.0', () => {
   console.log('\n========================================');
   console.log('🚀 CodeArena Server Running!');
