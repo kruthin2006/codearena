@@ -1,7 +1,7 @@
 {
   "name": "codearena-backend",
   "version": "1.0.0",
-  "description": "CodeArena Backend with Java/C++ Support",
+  "description": "CodeArena Backend",
   "main": "server-file.js",
   "scripts": {
     "start": "node server-file.js"

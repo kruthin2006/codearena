@@ -1,4 +1,4 @@
-// ===== DEBUG: ADD THIS AT THE VERY TOP =====
+// ===== DEBUG AT VERY TOP =====
 console.log('🚀 Starting server.js...');
 
 process.on('uncaughtException', (err) => {
@@ -28,16 +28,20 @@ app.use(cors());
 app.use(express.json());
 
 // ============ FIXED: USE /tmp FOR RENDER ============
-const DB_FILE = path.join('/tmp', 'database.json');
+const DB_FILE = '/tmp/database.json';
 const TEMP_DIR = '/tmp';
 
 console.log('✅ DB_FILE:', DB_FILE);
 console.log('✅ TEMP_DIR:', TEMP_DIR);
 
-// Create temp directory if it doesn't exist
-if (!fs.existsSync(TEMP_DIR)) {
-  fs.mkdirSync(TEMP_DIR, { recursive: true });
-  console.log('✅ Created TEMP_DIR');
+// ✅ FORCE CREATE /tmp DIRECTORY
+if (!fs.existsSync('/tmp')) {
+  fs.mkdirSync('/tmp', { recursive: true });
+}
+try {
+  fs.chmodSync('/tmp', 0o777);
+} catch (e) {
+  console.log('⚠️ Could not chmod /tmp:', e.message);
 }
 
 function readDB() {
