@@ -7,11 +7,14 @@ const jwt = require('jsonwebtoken');
 const { exec } = require('child_process');
 
 const app = express();
-const PORT = 5000;
+
+// ✅ FIX: Use PORT from environment (Render) or default 5000
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
+// ============ DATABASE ============
 const DB_FILE = path.join(__dirname, 'database.json');
 
 function readDB() {
@@ -39,6 +42,7 @@ function getNextId(db, type) {
   return String(id);
 }
 
+// ============ MIDDLEWARE ============
 function auth(req, res, next) {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -57,6 +61,7 @@ function adminOnly(req, res, next) {
   next();
 }
 
+// ============ AUTH ROUTES ============
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
@@ -111,6 +116,7 @@ app.get('/api/auth/me', (req, res) => {
   }
 });
 
+// ============ PROBLEMS ============
 app.get('/api/problems', auth, (req, res) => {
   const db = readDB();
   res.json({ success: true, problems: db.problems });
@@ -125,6 +131,7 @@ app.get('/api/problems/:id', auth, (req, res) => {
   res.json({ success: true, problem });
 });
 
+// ============ ADMIN - CREATE PROBLEM ============
 app.post('/api/admin/problems', auth, adminOnly, (req, res) => {
   try {
     const db = readDB();
@@ -149,6 +156,7 @@ app.post('/api/admin/problems', auth, adminOnly, (req, res) => {
   }
 });
 
+// ============ ADMIN - DELETE PROBLEM ============
 app.delete('/api/admin/problems/:id', auth, adminOnly, (req, res) => {
   try {
     const db = readDB();
@@ -165,6 +173,7 @@ app.delete('/api/admin/problems/:id', auth, adminOnly, (req, res) => {
   }
 });
 
+// ============ CODE EXECUTION ============
 const TEMP_DIR = path.join(__dirname, 'temp');
 if (!fs.existsSync(TEMP_DIR)) {
   fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -274,6 +283,7 @@ function executeCpp(code, input) {
   });
 }
 
+// ============ SUBMISSIONS ============
 app.post('/api/submissions/run', auth, async (req, res) => {
   try {
     const { code, language, input } = req.body;
@@ -390,6 +400,7 @@ app.get('/api/submissions/user', auth, (req, res) => {
   res.json({ success: true, submissions: subs });
 });
 
+// ============ ADMIN ANALYTICS ============
 app.get('/api/admin/users', auth, adminOnly, (req, res) => {
   try {
     const db = readDB();
@@ -455,7 +466,7 @@ app.get('/api/admin/problem-stats', auth, adminOnly, (req, res) => {
   }
 });
 
-// ============ REAL-TIME ONLINE STATUS ============
+// ============ ONLINE USERS ============
 const onlineUsers = new Map();
 
 app.post('/api/admin/heartbeat', auth, (req, res) => {
@@ -485,6 +496,7 @@ setInterval(() => {
   }
 }, 10000);
 
+// ============ CREATE DEFAULT ADMIN ============
 function createDefaultAdmin() {
   const db = readDB();
   if (db.users.length === 0) {
@@ -506,10 +518,11 @@ function createDefaultAdmin() {
 
 createDefaultAdmin();
 
-app.listen(PORT, () => {
+// ✅ FIX: Use PORT from environment and bind to 0.0.0.0 for Render
+app.listen(PORT, '0.0.0.0', () => {
   console.log('\n========================================');
   console.log('🚀 CodeArena Server Running!');
-  console.log('📍 http://localhost:' + PORT);
+  console.log('📍 Port:', PORT);
   console.log('📝 Login: admin / admin123');
   console.log('========================================\n');
 });
