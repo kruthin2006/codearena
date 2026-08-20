@@ -10,7 +10,7 @@ ENV PATH=$PATH:$JAVA_HOME/bin
 
 WORKDIR /app
 
-# Copy package files first (for better caching)
+# Copy package files
 COPY backend/package*.json ./backend/
 COPY frontend/package*.json ./frontend/
 
@@ -23,8 +23,8 @@ RUN cd /app/frontend && npm install
 # Copy all source code
 COPY . .
 
-# Build frontend
-RUN cd /app/frontend && npm run build
+# ✅ USE NPX to run react-scripts build
+RUN cd /app/frontend && npx react-scripts build
 
 EXPOSE 5000
 
