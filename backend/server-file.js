@@ -1,3 +1,12 @@
+// ✅ Add this at the VERY TOP - Error handling
+process.on('uncaughtException', (err) => {
+  console.error('💥 Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 Unhandled Rejection:', reason);
+});
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -7,15 +16,14 @@ const jwt = require('jsonwebtoken');
 const { exec } = require('child_process');
 
 const app = express();
-
-// ✅ FIX: Use PORT from environment (Render) or default 5000
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-// ============ DATABASE ============
-const DB_FILE = path.join(__dirname, 'database.json');
+// ============ DATABASE - USE /tmp FOR RENDER ============
+// ✅ For Render, use /tmp directory (writable)
+const DB_FILE = path.join('/tmp', 'database.json');
 
 function readDB() {
   if (!fs.existsSync(DB_FILE)) {
@@ -174,7 +182,8 @@ app.delete('/api/admin/problems/:id', auth, adminOnly, (req, res) => {
 });
 
 // ============ CODE EXECUTION ============
-const TEMP_DIR = path.join(__dirname, 'temp');
+// ✅ Use /tmp for temp files on Render
+const TEMP_DIR = '/tmp';
 if (!fs.existsSync(TEMP_DIR)) {
   fs.mkdirSync(TEMP_DIR, { recursive: true });
 }
@@ -498,27 +507,31 @@ setInterval(() => {
 
 // ============ CREATE DEFAULT ADMIN ============
 function createDefaultAdmin() {
-  const db = readDB();
-  if (db.users.length === 0) {
-    const hashedPassword = bcrypt.hashSync('admin123', 10);
-    db.users.push({
-      _id: '1',
-      username: 'admin',
-      email: 'admin@codearena.com',
-      password: hashedPassword,
-      role: 'admin',
-      stats: { problemsSolved: 0, totalAttempts: 0 },
-      createdAt: new Date().toISOString()
-    });
-    db._meta.userIdCounter = 2;
-    writeDB(db);
-    console.log('✅ Admin created: admin / admin123');
+  try {
+    const db = readDB();
+    if (db.users.length === 0) {
+      const hashedPassword = bcrypt.hashSync('admin123', 10);
+      db.users.push({
+        _id: '1',
+        username: 'admin',
+        email: 'admin@codearena.com',
+        password: hashedPassword,
+        role: 'admin',
+        stats: { problemsSolved: 0, totalAttempts: 0 },
+        createdAt: new Date().toISOString()
+      });
+      db._meta.userIdCounter = 2;
+      writeDB(db);
+      console.log('✅ Admin created: admin / admin123');
+    }
+  } catch (e) {
+    console.error('❌ Error creating admin:', e);
   }
 }
 
 createDefaultAdmin();
 
-// ✅ FIX: Use PORT from environment and bind to 0.0.0.0 for Render
+// ============ START SERVER ============
 app.listen(PORT, '0.0.0.0', () => {
   console.log('\n========================================');
   console.log('🚀 CodeArena Server Running!');
