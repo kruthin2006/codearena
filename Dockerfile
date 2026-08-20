@@ -1,29 +1,26 @@
 FROM node:18
 
-# Install Java and C++ compilers
+# Install Java and C++
 RUN apt-get update && \
     apt-get install -y openjdk-17-jdk g++ && \
     rm -rf /var/lib/apt/lists/*
 
-# Set Java environment
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
-# Create app directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-RUN npm install
+# Copy and install BACKEND dependencies
+COPY backend/package*.json ./backend/
+RUN cd backend && npm install
 
-# Copy backend code
+# Copy and install FRONTEND dependencies
+COPY frontend/package*.json ./frontend/
+RUN cd frontend && npm install && npm run build
+
+# Copy all code
 COPY . .
 
-# Create temp directory for code execution
-RUN mkdir -p temp
-
-# Expose port
 EXPOSE 5000
 
-# Start server
-CMD ["node", "server-file.js"]
+CMD ["node", "backend/server-file.js"]
