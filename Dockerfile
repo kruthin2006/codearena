@@ -8,28 +8,24 @@ RUN apt-get update && \
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
-# Set working directory
 WORKDIR /app
 
-# Copy ALL backend files
-COPY backend /app/backend
-WORKDIR /app/backend
-RUN npm install
+# Copy package files first (for better caching)
+COPY backend/package*.json ./backend/
+COPY frontend/package*.json ./frontend/
 
-# Copy ALL frontend files
-COPY frontend /app/frontend
-WORKDIR /app/frontend
-RUN npm install
-RUN npm run build
+# Install backend dependencies
+RUN cd /app/backend && npm install
 
-# Go back to root
-WORKDIR /app
+# Install frontend dependencies
+RUN cd /app/frontend && npm install
 
-# Copy other files
+# Copy all source code
 COPY . .
 
-# Expose port
+# Build frontend
+RUN cd /app/frontend && npm run build
+
 EXPOSE 5000
 
-# Start command
 CMD ["node", "backend/server-file.js"]
