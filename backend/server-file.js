@@ -1,3 +1,16 @@
+// ===== DEBUG: ADD THIS AT THE VERY TOP =====
+console.log('🚀 Starting server.js...');
+
+process.on('uncaughtException', (err) => {
+  console.error('💥 UNCAUGHT EXCEPTION:', err.message);
+  console.error(err.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 UNHANDLED REJECTION:', reason);
+});
+// ===== END DEBUG =====
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -9,6 +22,8 @@ const { exec } = require('child_process');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+console.log('✅ Express loaded, PORT:', PORT);
+
 app.use(cors());
 app.use(express.json());
 
@@ -16,9 +31,13 @@ app.use(express.json());
 const DB_FILE = path.join('/tmp', 'database.json');
 const TEMP_DIR = '/tmp';
 
+console.log('✅ DB_FILE:', DB_FILE);
+console.log('✅ TEMP_DIR:', TEMP_DIR);
+
 // Create temp directory if it doesn't exist
 if (!fs.existsSync(TEMP_DIR)) {
   fs.mkdirSync(TEMP_DIR, { recursive: true });
+  console.log('✅ Created TEMP_DIR');
 }
 
 function readDB() {
@@ -30,6 +49,7 @@ function readDB() {
       _meta: { userIdCounter: 1, problemIdCounter: 1, submissionIdCounter: 1 }
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(defaultData, null, 2));
+    console.log('✅ Created new database.json');
   }
   return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
 }
@@ -522,6 +542,7 @@ function createDefaultAdmin() {
 createDefaultAdmin();
 
 // ============ FIXED: START SERVER ============
+console.log('✅ About to start server...');
 app.listen(PORT, '0.0.0.0', () => {
   console.log('\n========================================');
   console.log('🚀 CodeArena Server Running!');
