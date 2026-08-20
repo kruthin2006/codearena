@@ -15,9 +15,10 @@ COPY backend /app/backend
 WORKDIR /app/backend
 RUN npm install
 
-# Use pre-built frontend (no React build needed!)
+# Copy frontend build
 COPY frontend/build /app/frontend/build
 
 EXPOSE 5000
 
-CMD ["node", "backend/server-file.js"]
+# ✅ START WITH THE TEST FILE
+CMD ["node", "/app/backend/start.js"]
