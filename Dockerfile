@@ -10,24 +10,14 @@ ENV PATH=$PATH:$JAVA_HOME/bin
 
 WORKDIR /app
 
-# Copy backend first
+# Copy backend
 COPY backend /app/backend
 WORKDIR /app/backend
 RUN npm install
 
-# Copy frontend
-COPY frontend /app/frontend
-WORKDIR /app/frontend
-
-# ✅ FIX: Install react-scripts globally first
-RUN npm install -g react-scripts
-
-# Then install local dependencies
-RUN npm install
-
-# ✅ Build using the global react-scripts
-RUN react-scripts build
+# Use pre-built frontend (no React build needed!)
+COPY frontend/build /app/frontend/build
 
 EXPOSE 5000
 
-CMD ["node", "/app/backend/server-file.js"]
+CMD ["node", "backend/server-file.js"]
